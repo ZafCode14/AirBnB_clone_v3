@@ -9,38 +9,27 @@ from models.user import User
 @app_views.route('/users/', methods=["GET"])
 def users_get():
     """Get all user objects"""
-    array = []
-
-    all_obj = storage.all(User)
-
-    for obj in all_obj.values():
-        dictionary = obj.to_dict()
-        array.append(dictionary)
-
-    return jsonify(array)
+    users = [user.to_dict() for user in storage.all(User).values()]
+    return jsonify(users)
 
 
-@app_views.route("/users/<obj_id>", methods=["GET"])
-def user_get(obj_id):
+@app_views.route("/users/<user_id>", methods=["GET"])
+def user_get(user_id):
     """Get a user object"""
-    obj = storage.get(User, obj_id)
-
-    if obj is None:
+    user = storage.get(User, user_id)
+    if user is None:
         abort(404)
+    return jsonify(user.to_dict())
 
-    return jsonify(obj.to_dict())
 
-
-@app_views.route("/users/<obj_id>", methods=["DELETE"])
-def user_delete(obj_id):
+@app_views.route("/users/<user_id>", methods=["DELETE"])
+def user_delete(user_id):
     """Delete a user object"""
-    obj = storage.get(User, obj_id)
-    if obj is None:
+    user = storage.get(User, user_id)
+    if user is None:
         abort(404)
-
-    storage.delete(obj)
+    storage.delete(user)
     storage.save()
-
     return jsonify({}), 200
 
 
@@ -52,20 +41,23 @@ def user_create():
 
     data = request.get_json()
 
-    if 'name' not in data:
-        abort(400, "Missing name")
+    if 'email' not in data:
+        abort(400, "Missing email")
 
-    new_obj = User(**data)
-    new_obj.save()
+    if 'password' not in data:
+        abort(400, "Missing password")
 
-    return jsonify(new_obj.to_dict()), 201
+    new_user = User(**data)
+    new_user.save()
+
+    return jsonify(new_user.to_dict()), 201
 
 
-@app_views.route('/users/<obj_id>', methods=['PUT'])
-def user_update(obj_id):
+@app_views.route('/users/<user_id>', methods=['PUT'])
+def user_update(user_id):
     """Update a User object"""
-    obj = storage.get(User, obj_id)
-    if obj is None:
+    user = storage.get(User, user_id)
+    if user is None:
         abort(404)
 
     if not request.is_json:
@@ -75,8 +67,8 @@ def user_update(obj_id):
 
     for key, value in data.items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
-            setattr(obj, key, value)
+            setattr(user, key, value)
 
-    obj.save()
+    user.save()
 
-    return jsonify(obj.to_dict()), 200
+    return jsonify(user.to_dict()), 200
