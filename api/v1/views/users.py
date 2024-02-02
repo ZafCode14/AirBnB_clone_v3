@@ -74,7 +74,7 @@ def user_update(obj_id):
     data = request.get_json()
 
     for key, value in data.items():
-        if key not in ['id', 'created_at', 'updated_at']:
+        if key not in ['id', 'email', 'created_at', 'updated_at']:
             setattr(obj, key, value)
 
     obj.save()
