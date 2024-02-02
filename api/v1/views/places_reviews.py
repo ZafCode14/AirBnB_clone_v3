@@ -84,7 +84,9 @@ def review_update(review_id):
     data = request.get_json()
 
     for key, value in data.items():
-        if key not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if key not in [
+                'id', 'user_id', 'place_id',
+                'created_at', 'updated_at']:
             setattr(review, key, value)
 
     review.save()
