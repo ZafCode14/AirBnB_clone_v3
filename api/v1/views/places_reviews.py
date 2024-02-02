@@ -3,46 +3,41 @@
 from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
+from models.review import Review
 from models.place import Place
-from models.review import Review 
+from models.user import User
 
 
-@app_views.route('/places/<place_id>/reviews/', methods=["GET"])
+@app_views.route('/places/<place_id>/reviews', methods=["GET"])
 def reviews_get(place_id):
     """Get all review objects"""
-    array = []
-
     place = storage.get(Place, place_id)
-
     if place is None:
         abort(404)
 
-    for review in place.reviews:
-        array.append(review.to_dict())
-
-    return jsonify(array)
+    reviews = [review.to_dict() for review in place.reviews]
+    return jsonify(reviews)
 
 
-@app_views.route('/reviews/<review_id>/', methods=["GET"])
+@app_views.route('/reviews/<review_id>', methods=["GET"])
 def review_get(review_id):
-    """Get review object"""
+    """Get a review object"""
     review = storage.get(Review, review_id)
-
     if review is None:
         abort(404)
 
     return jsonify(review.to_dict())
 
 
-@app_views.route('/reviews/<review_id>/', methods=["DELETE"])
-def reviews_delete(review_id):
-    """delete review object"""
-    review = storage.get(Review, reivew_id)
-
+@app_views.route('/reviews/<review_id>', methods=["DELETE"])
+def review_delete(review_id):
+    """Delete a review object"""
+    review = storage.get(Review, review_id)
     if review is None:
         abort(404)
 
     storage.delete(review)
+    storage.save()
 
     return jsonify({}), 200
 
