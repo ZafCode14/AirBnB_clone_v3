@@ -5,6 +5,7 @@ from flask import jsonify, abort, request
 from models import storage
 from models.amenity import Amenity
 
+
 @app_views.route('/amenities/', methods=["GET"])
 def amenities_get():
     """Get all amenity objects"""

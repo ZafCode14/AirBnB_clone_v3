@@ -16,6 +16,7 @@ def teardown_db(exception):
     """Module that closes storage"""
     storage.close()
 
+
 @app.errorhandler(404)
 def not_found(error):
     """Method that returns status 404"""
