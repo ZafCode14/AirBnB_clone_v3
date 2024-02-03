@@ -122,8 +122,11 @@ def places_search():
                 places.extend(city.places)
 
         if amenities:
-            amenities_objs = [storage.get(Amenity, amenity_id) for amenity_id in amenities]
-            places = [place for place in places if all(amenity in place.amenities for amenity in amenities_objs)]
+            amenities_objs = [
+                    storage.get(
+                        Amenity, amenity_id) for amenity_id in amenities]
+            places = [
+                    place for place in places if all(
+                        amen in place.amenities for amen in amenities_objs)]
 
     return jsonify([place.to_dict() for place in places])
-
