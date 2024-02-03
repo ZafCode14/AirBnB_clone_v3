@@ -27,3 +27,7 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """initializes user"""
         super().__init__(*args, **kwargs)
+
+    def update_password(self, password):
+        """Hashes the password and updates it"""
+        self.password = hashlib.md5(password.encode()).hexdigest()
